@@ -1,0 +1,7 @@
+export EPICS_DISPLAY_PATH=/net/s2dserv/xorApps/epics/synApps_6_2/support/areaDetector-R3-11/ADAravis-R2-2-1/aravisApp/op/adl:/net/s2dserv/xorApps/epics/synApps_6_2/support/areaDetector-R3-11/ADGenICam-R1-7-1/GenICamApp/op/adl:/net/s2dserv/xorApps/epics/synApps_6_2/support/areaDetector-R3-11/ADCore-R3-11/ADApp/op/adl
+ 
+/APSshare/epics/extensions/bin/linux-x86_64/medm  -x -macro "P=2bmARV1:, R=cam1:, C=PGR_GS3_U3_23S6M" ADAravis.adl &
+
+
+
+

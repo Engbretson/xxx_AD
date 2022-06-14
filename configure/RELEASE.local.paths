@@ -1,0 +1,4 @@
+
+SUPPORT=/APSshare/epics/synApps_6_2_1/support
+AREA_DETECTOR=$(SUPPORT)/areaDetector-R3-12-1
+

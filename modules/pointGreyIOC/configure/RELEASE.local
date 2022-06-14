@@ -1,0 +1,18 @@
+#
+# which specific version of support / Area Detector to actually use, or nothing to use the default, or whatever 
+# the next higher level thing is using, which is the default here
+#
+
+#SUPPORT=/APSshare/epics/synApps_6_2_1/support
+#AREA_DETECTOR=$(SUPPORT)/areaDetector-R3-12-1
+
+-include ../configure/RELEASE.local.paths
+
+#Ideally, I would want to use whatever the top level build is using, but I get too many open file messages on something with should not be recursively opening anything
+
+# and what we actually want to build in this image 
+
+-include $(TOP)/configure/RELEASE.local.detectors
+
+
+

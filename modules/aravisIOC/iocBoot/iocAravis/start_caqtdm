@@ -1,0 +1,9 @@
+export CAQTDM_DISPLAY_PATH=/net/s2dserv/xorApps/PreBuilts/areaDetector-R3-10/ADAravis-R2-1/aravisApp/op/ui/autoconvert:/net/s2dserv/xorApps/PreBuilts/areaDetector-R3-10/ADGenICam-R1-6/GenICamApp/op/ui/autoconvert:/net/s2dserv/xorApps/PreBuilts/areaDetector-R3-10/ADCore-R3-10/ADApp/op/ui/autoconvert:/net/s2dserv/xorApps/PreBuilts/areaDetector-R3-10/ADCore-R3-10/ADApp/op/ui
+ 
+/APSshare/caqtdm/caqtdm-4.3.0/caQtDM_Binaries/caQtDM  -x -macro "P=2bmARV1:, R=cam1:, C=PGR_GS3_U3_23S6M" ADAravis.ui  &
+
+/APSshare/caqtdm/caqtdm-4.3.0/caQtDM_Binaries/caQtDM  -attach -x -macro "P=2bmARV1:, R=cam1:, C=PGR_GS3_U3_23S6M"  ad_cam_image.ui &
+
+
+
+

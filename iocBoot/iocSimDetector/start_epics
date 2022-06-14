@@ -1,0 +1,4 @@
+#medm -x -macro "P=13SIM1:, R=cam1:" simDetector.adl &
+#../../bin/rhel8-x86_64/simDetectorApp st.cmd.linux
+# or
+../../bin/rhel8-x86_64/xxx st.cmd.linux
