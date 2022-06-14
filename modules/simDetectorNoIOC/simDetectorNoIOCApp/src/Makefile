@@ -16,10 +16,10 @@ ifeq ($(EPICS_LIBCOM_ONLY),YES)
   USR_CXXFLAGS += -DEPICS_LIBCOM_ONLY
 endif
 
-PROD_IOC_Linux  += simDetectorNoIOCApp
-PROD_IOC_WIN32  += simDetectorNoIOCApp
-PROD_IOC_Darwin += simDetectorNoIOCApp
-PROD_SRCS += simDetectorNoIOC.cpp
+PROD_IOC_Linux  += xxxsimDetectorNoIOCApp
+PROD_IOC_WIN32  += xxxsimDetectorNoIOCApp
+PROD_IOC_Darwin += xxxsimDetectorNoIOCApp
+PROD_SRCS += xxxsimDetectorNoIOC.cpp
 
 PROD_LIBS += simDetector
 

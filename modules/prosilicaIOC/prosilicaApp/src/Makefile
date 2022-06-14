@@ -15,7 +15,7 @@ ifeq ($(T_A), windows-x64-debug)
 USR_LDFLAGS += /NODEFAULTLIB:LIBCMT
 endif
 
-PROD_NAME = prosilicaApp
+PROD_NAME = xxxprosilicaApp
 PROD_IOC_WIN32  += $(PROD_NAME)
 PROD_IOC_Linux  += $(PROD_NAME)
 PROD_IOC_Darwin += $(PROD_NAME)

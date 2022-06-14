@@ -3,7 +3,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 
-PROD_NAME = pixiradApp
+PROD_NAME = xxxpixiradApp
 PROD_IOC += $(PROD_NAME)
 
 # <name>.dbd will be created from <name>Include.dbd

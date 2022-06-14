@@ -4,7 +4,7 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 
 ifeq ($(WITH_GRAPHICSMAGICK), YES)
-  PROD_NAME = URLDriverApp
+  PROD_NAME = xxxURLDriverApp
   PROD_IOC  += $(PROD_NAME)
 
   # <name>.dbd will be created from <name>Include.dbd

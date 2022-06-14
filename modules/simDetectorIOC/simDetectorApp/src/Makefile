@@ -10,7 +10,7 @@ ifeq (vxWorks,$(findstring vxWorks, $(T_A)))
 CODE_CXXFLAGS=
 endif
 
-PROD_NAME = simDetectorApp
+PROD_NAME = xxxsimDetectorApp
 PROD_IOC = $(PROD_NAME)
 
 # <name>.dbd will be created from <name>Include.dbd

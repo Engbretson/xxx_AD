@@ -8,7 +8,7 @@ include $(TOP)/configure/CONFIG
 # It leads to a build error on windows-x64, but to a run-time error on Linux.
 WITH_GRAPHICSMAGICK=NO
 
-PROD_NAME = andorCCDApp
+PROD_NAME = xxxandorCCDApp
 PROD_IOC_WIN32  += $(PROD_NAME)
 PROD_IOC_Linux  += $(PROD_NAME)
 

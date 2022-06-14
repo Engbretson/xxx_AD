@@ -3,7 +3,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 
-PROD_NAME = spinnakerApp
+PROD_NAME = xxxspinnakerApp
 PROD_IOC_WIN32 += $(PROD_NAME)
 PROD_IOC_Linux += $(PROD_NAME)
 

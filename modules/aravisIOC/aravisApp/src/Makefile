@@ -3,7 +3,7 @@ include $(TOP)/configure/CONFIG
 #----------------------------------------
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 
-PROD_NAME = ADAravisApp
+PROD_NAME = xxxADAravisApp
 PROD_IOC_Linux  += $(PROD_NAME)
 PROD_IOC_Darwin += $(PROD_NAME)
 
