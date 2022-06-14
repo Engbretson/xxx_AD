@@ -17,5 +17,49 @@ refer to http://www.aps.anl.gov/bcda/synApps/license.php
 
 * [HTML documentation](https://github.com/epics-modules/xxx/blob/master/documentation/README.md)
 
+**********************************************************************************************************************
+This is a modification to also build single Area Detector support modules within xxx as well and multiple AD binaries.
+**********************************************************************************************************************
 
-THis is a modification to also build single Area Detector support modules within xxx as well and multiple AD binaries.
+So one can create a "Universal Area Detector binary, which currently include by default 
+
+
+# Simple ones that always work
+
+ADURL=$(AREA_DETECTOR)/ADURL
+ADSIMDETECTOR=$(AREA_DETECTOR)/ADSimDetector
+ADMAR345=$(AREA_DETECTOR)/ADmar345
+ADGENICAM=$(AREA_DETECTOR)/ADGenICam
+ADPIXIRAD=$(AREA_DETECTOR)/ADPixirad
+
+#
+# complex ones that need custom makefile code to work in static modes
+# (to resolve support libs that are still *.so and not *.a)
+#
+
+ADARAVIS=$(AREA_DETECTOR)/ADAravis
+ADVIMBA=$(AREA_DETECTOR)/ADVimba
+ADPROSILICA=$(AREA_DETECTOR)/ADProsilica
+ADPILATUS=$(AREA_DETECTOR)/ADPilatus
+ADEIGER=$(AREA_DETECTOR)/ADEiger
+
+#RHEL8 Only
+ADSPINNAKER=$(AREA_DETECTOR)/ADSpinnaker
+
+####################################################################################################
+
+#ADPointGrey does not play well on computers with legacy udev rules in play
+#Enable at your own risk !!!!!!!!!!!!!!!!!!!
+#ADPOINTGREY=$(AREA_DETECTOR)/ADPointGrey
+
+#neither does Andor, conflicts in some way that generates unreal #'s of lost frames
+#ADANDOR=$(AREA_DETECTOR)/ADAndor
+
+
+And everything that is normally built-in via the standard XXX depoyment, which is most of synApps, also is available.
+
+Since not all AD's play well with each other, also just building the default AD only binaries. And this code could be tweaked in to in any custum AD plugins, or other support, as required. No actual code is built-in by default; it all comes via shared libraries, so that if we patch APSshare, everyone using this sort of AD aware xxx would also get those changes on next restart.
+
+Screen paths are obtained from the envPaths variables, so should track all changes.
+
+Also potentially uses a patch version of caQtDM that correctly parses adl files into ui files at run time, so only 1 set of screen sources are required.
