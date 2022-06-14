@@ -16,7 +16,7 @@ include $(TOP)/configure/CONFIG
 # PROD_NAME is used by ADCORE to add libraries
 # DBD_PREFIX is used by ADCORE to add dbd files
 PROD_NAME = xxxApp
-DBD_PREFIX = iocxxx
+DBD_PREFIX = xxx
 PROD_IOC = $(PROD_NAME)
 
 LDFLAGS=-Wl,-rpath='$$ORIGIN/libs'
