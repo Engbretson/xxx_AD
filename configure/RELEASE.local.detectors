@@ -1,37 +1,3 @@
 
-#
-# Which Area Detectors to fold into this universal AD/XXX binary 
-#
-
-# Simple ones that always work
-
-ADURL=$(AREA_DETECTOR)/ADURL
-ADSIMDETECTOR=$(AREA_DETECTOR)/ADSimDetector
-ADMAR345=$(AREA_DETECTOR)/ADmar345
-ADGENICAM=$(AREA_DETECTOR)/ADGenICam
-ADPIXIRAD=$(AREA_DETECTOR)/ADPixirad
-
-#
-# complex ones that need custom makefile code to work in static modes
-# (to resolve support libs that are still *.so and not *.a)
-#
-
-ADARAVIS=$(AREA_DETECTOR)/ADAravis
-ADVIMBA=$(AREA_DETECTOR)/ADVimba
-ADPROSILICA=$(AREA_DETECTOR)/ADProsilica
-ADPILATUS=$(AREA_DETECTOR)/ADPilatus
-ADEIGER=$(AREA_DETECTOR)/ADEiger
-
-#RHEL8 Only
-ADSPINNAKER=$(AREA_DETECTOR)/ADSpinnaker
-
-####################################################################################################
-
-#ADPointGrey does not play well on computers with legacy udev rules in play
-#Enable at your own risk !!!!!!!!!!!!!!!!!!!
-#ADPOINTGREY=$(AREA_DETECTOR)/ADPointGrey
-
-#neither does Andor, conflicts in some way that generates unreal #'s of lost frames
-#ADANDOR=$(AREA_DETECTOR)/ADAndor
 
 

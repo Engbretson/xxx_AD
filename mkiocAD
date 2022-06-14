@@ -1,0 +1,305 @@
+#!/bin/bash
+
+VERSION="0.0.1"
+
+#Default synApps version
+SYNAPPS_VERSION="6-2-1"
+
+function print_help
+{
+    echo "Usage: mkioc [options] ioc_name"
+    echo ""
+    echo "-h            print this message"
+    echo "-v            print the version"
+#    echo "-f            create a fresh git repo without an xxx remote"
+#    echo "-g            default to using gitlab to grab xxx and push ioc"
+#    echo "-n            default to not using gitlab to grab xxx or push ioc"
+#    echo "-s <version>  use a specific synApps version"
+}
+
+function print_version
+{
+    echo "Version: ${VERSION}"
+}
+
+FRESH_REPO=0
+ASK_GITLAB=0 
+GITLAB=0
+ASK_SYNAPPS=0
+
+###
+### Parse command-line options
+###
+
+while getopts hvfgns: option
+do
+    case "${option}" in
+        h)
+            print_help
+            exit 2
+        ;;
+
+        v)
+            print_version
+            exit 0
+        ;;
+        
+        f)
+            FRESH_REPO=1
+        ;;
+        
+        s)
+            SYNAPPS_VERSION=${OPTARG}
+			ASK_SYNAPPS=0
+        ;;
+
+        g)
+            ASK_GITLAB=0
+            GITLAB=1
+        ;;
+        
+        n)
+            ASK_GITLAB=0
+            GITLAB=0
+        ;;
+    esac
+done
+
+#echo "OPTIND: $OPTIND"
+#echo ${#@}
+
+shift $((OPTIND - 1 ))
+
+#echo "$SYNAPPS_VERSION, $GITLAB"
+
+if [ "${#@}" -ne 1 ]
+then
+    echo "Error: one IOC name is required"
+    exit 1
+fi
+
+IOC_NAME=$1
+
+###
+### Correct synApps version
+###
+
+if [ $ASK_SYNAPPS -eq 1 ]
+then
+
+	CHECK_VERSION=$(basename $(realpath ..))
+
+	if [[ $CHECK_VERSION =~ synApps_[0-9_] ]]
+	then
+		SYNAPPS_VERSION=${CHECK_VERSION/synApps_/}
+	fi
+
+	echo "Use synApps tag: $SYNAPPS_VERSION?"
+	
+	read RESPONSE
+	
+	if [[ ! $RESPONSE =~ [Yy](es)* ]]
+    then
+        echo "Enter synApps tag to use: "
+		
+		read RESPONSE
+		
+		SYNAPPS_VERSION=$RESPONSE
+    fi
+fi
+
+#Allow both dash as well as underscores
+SYNAPPS_VERSION=${SYNAPPS_VERSION//_/-}
+
+#Remove leading R if user used github tag format
+SYNAPPS_VERSION=${SYNAPPS_VERSION//R/}
+
+SYNAPPS_LOCATION="/APSshare/epics/synApps_${SYNAPPS_VERSION//-/_}"
+
+if [ ! -d $SYNAPPS_LOCATION ] ; then
+    echo "Cannot find synApps version with tag: ${SYNAPPS_VERSION}"
+    exit 1
+fi
+
+XXX_VERSION=R$SYNAPPS_VERSION
+
+###
+### Create gitlab repo
+###
+
+if [ $ASK_GITLAB -eq 1 ]
+then
+
+    echo "Would you like to link this IOC to gitlab?"
+        
+    read RESPONSE
+    
+    #If yes, set GITLAB var
+    if [[ $RESPONSE =~ [Yy](es)* ]] ; 
+    then
+        GITLAB=1
+    fi
+fi
+
+if [ $GITLAB -eq 1 ]
+then
+
+    TOKEN=`git config --global --get gitlab.token`
+    
+    if [[ $TOKEN = "error:"* ]] ; then
+        echo "Gitlab token not found, run git config --global gitlab.token \"<TOKEN>\""
+        exit
+    fi
+    
+    LOW_CASE=$IOC_NAME
+    
+    declare -l LOW_CASE
+    LOW_CASE=$LOW_CASE
+    
+    #Grab the sector name
+    if [[ $IOC_NAME =~ ([0-9]+)(id|bm) ]] ; then
+        SECTOR_NUM=${BASH_REMATCH[1]}
+        SECTOR_TAG=${BASH_REMATCH[2]}
+        GROUP_NAME=${SECTOR_NUM}${SECTOR_TAG}
+    else
+        echo "IOC name not of format ##[id/bm]name"
+        echo "Enter the name of the gitlab group that this ioc will be under: "
+        
+        read GROUP_NAME
+    fi
+
+    #Check if ioc prefix exists as group on gitlab
+    GROUP_EXISTENCE=`curl --silent -H "Content-Type:application/json" https://git.aps.anl.gov/api/v4/groups/${GROUP_NAME}?private_token=${TOKEN}`
+    
+    if [[ ! $GROUP_EXISTENCE =~ \"id\".([0-9]+) ]] ; then
+        echo "No gitlab group found for Group: ${GROUP_NAME}"
+        echo "Would you like to create group?"
+        
+        read RESPONSE
+        
+        #If yes, create group
+        if [[ $RESPONSE =~ [Yy](es)* ]] ; then
+        
+            if [ -n "${SECTOR_NUM:+1}" ]; then
+                #Pretty print sector name
+                declare -u SECTOR_TAG
+                SECTOR_TAG=$SECTOR_TAG
+            
+                PPRINT=${SECTOR_NUM}-${SECTOR_TAG}
+            else
+                PPRINT=${GROUP_NAME}
+            fi
+                
+            GROUP_EXISTENCE=`curl --silent -H "Content-Type:application/json" https://git.aps.anl.gov/api/v4/groups?private_token=${TOKEN} -d "{ \"name\": \"${GROUP_NAME}\", \"path\": \"${GROUP_NAME}\", \"description\": \"${PPRINT}'s IOC's and other projects\", \"visibility\": \"internal\" }"`
+        fi
+        
+            #Then check regex again, if no to previous question, this will also exit
+        if [[ ! $GROUP_EXISTENCE =~ \"id\".([0-9]+) ]] ; then
+            exit 1
+        fi
+    fi
+    
+    #Extract ID
+    GROUP_ID=${BASH_REMATCH[1]}
+fi
+
+
+###
+### Create the IOC
+###
+
+if [[ -d "$IOC_NAME" ]] ; then
+    echo "Directory already exists"
+    exit 1
+fi
+
+if [ $FRESH_REPO -eq 0 ]
+then
+    if [ $GITLAB -eq 1 ]
+    then
+        mkdir "$IOC_NAME"
+        cd "$IOC_NAME"
+
+        git init
+        # ssh
+        #git remote add xxx git@git.aps.anl.gov:synApps_${SYNAPPS_VERSION//-/_}_Working/xxx-${XXX_VERSION}
+        # https
+        #git remote add xxx https://git.aps.anl.gov/synApps_${SYNAPPS_VERSION//-/_}_Working/xxx-${XXX_VERSION}.git
+        git remote add xxx https://github.com/Engbretson/xxx_AD.git
+        git fetch xxx
+        git fetch xxx --tags
+        git checkout master
+
+        git branch --unset-upstream
+    else
+        cp -r "${SYNAPPS_LOCATION}/support/xxx-${XXX_VERSION}" "$IOC_NAME"
+	cd "$IOC_NAME"
+	
+	git branch --unset-upstream
+    fi
+    
+    ${SYNAPPS_LOCATION}/support/utils/changePrefix xxx $IOC_NAME
+    
+    sed -i -e "s|SUPPORT=.*\$|SUPPORT=${SYNAPPS_LOCATION}/support|g" configure/RELEASE
+    
+    git add ${IOC_NAME}App
+    git add --ignore-removal iocBoot/*
+    git add --all :/
+    git commit -m "setup"
+else
+    if [ $GITLAB -eq 1 ]
+    then
+
+        ## This approach was used by makeIOC.sh
+        # ssh
+        git clone git@git.aps.anl.gov:synApps_${SYNAPPS_VERSION//-/_}_Working/xxx-${XXX_VERSION} $IOC_NAME
+        # https
+        #git clone https://git.aps.anl.gov/synApps_${SYNAPPS_VERSION//-/_}_Working/xxx-${XXX_VERSION}.git $IOC_NAME
+        cd ${IOC_NAME}
+    else
+        cp -r "${SYNAPPS_LOCATION}/support/xxx-${XXX_VERSION}" "$IOC_NAME"
+	cd "$IOC_NAME"
+    fi
+    
+    ${SYNAPPS_LOCATION}/support/utils/changePrefix xxx $IOC_NAME
+    
+    sed -i -e "s|SUPPORT=.*\$|SUPPORT=${SYNAPPS_LOCATION}/support|g" configure/RELEASE
+    
+    rm -rf .git/
+    git init
+    git add .
+    git commit -am "Initial commit of $IOC_NAME after running changePrefix"
+fi
+
+###
+### Push to gitlab
+###
+
+if [ $GITLAB -eq 1 ]
+then
+    #Create repository on gitlab if it doesn't exist
+    REPO_EXISTENCE=`curl --silent -H "Content-Type:application/json" https://git.aps.anl.gov/api/v4/projects/${GROUP_NAME}%2F${IOC_NAME}?private_token=${TOKEN}`
+    
+    if [[ ! $REPO_EXISTENCE =~ \"id\".([0-9]+) ]] ; then
+        curl -H "Content-Type:application/json" https://git.aps.anl.gov/api/v4/projects?private_token=${TOKEN} -d "{ \"name\": \"$IOC_NAME\", \"namespace_id\": ${GROUP_ID}, \"visibility\": \"internal\" }"
+    else
+        echo "Gitlab project already exists, overwrite?"
+    
+        read RESPONSE
+    
+        if [[ $RESPONSE =~ [Nn](o)* ]] ; then
+            exit
+        fi
+    fi
+    
+    if [ $FRESH_REPO -eq 0 ]
+    then
+        git remote add gitlab git@git.aps.anl.gov:${GROUP_NAME}/${LOW_CASE}.git
+        git push --set-upstream gitlab master
+    else
+        git remote add origin git@git.aps.anl.gov:${GROUP_NAME}/${LOW_CASE}.git
+        git push --set-upstream origin master
+
+    fi
+fi
+
